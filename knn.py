@@ -15,7 +15,7 @@ TEST_CSV = "features_csv/test_features.csv"
 N_NEIGHBORS = 5
 METRIC = "manhattan"
 WEIGHTS = "distance"
-N_COMPONENTS = 150  # Number of PCA components
+N_COMPONENTS = 200  # Number of PCA components
 
 # --------------------------------------------------
 # Load CSV files
