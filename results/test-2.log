@@ -1,12 +1,12 @@
 === Feature Extraction ===
-Time taken: 03:00
-Train features shape: (9000, 576)
-Test features shape: (6000, 576)
+Time taken: 22:08
+Train features shape: (9000, 2048)
+Test features shape: (6000, 2048)
 
 ==================================================
 Feature Extraction Configuration
 ==================================================
-  Model:          MobileNetV3 Small (576-D)
+  Model:          ResNet50 (2048-D)
   Weights:        IMAGENET1K_V1
   Data dir:       lymphoma-database/
   Output dir:     features_csv
@@ -30,18 +30,18 @@ Training k-NN...
 Classification Report (k-NN):
               precision    recall  f1-score   support
 
-           0       0.78      0.91      0.84      1984
-           1       0.84      0.87      0.86      1960
-           2       0.86      0.69      0.77      2056
+           0       0.85      0.95      0.90      1984
+           1       0.92      0.94      0.93      1960
+           2       0.93      0.81      0.87      2056
 
-    accuracy                           0.82      6000
-   macro avg       0.83      0.83      0.82      6000
-weighted avg       0.83      0.82      0.82      6000
+    accuracy                           0.90      6000
+   macro avg       0.90      0.90      0.90      6000
+weighted avg       0.90      0.90      0.90      6000
 
 Confusion Matrix:
-[[1811   71  102]
- [ 130 1709  121]
- [ 375  256 1425]]
+[[1887   30   67]
+ [  74 1834   52]
+ [ 254  137 1665]]
 
 ==================================================
 k-NN Configuration
@@ -51,9 +51,9 @@ k-NN Configuration
   k (neighbors):  7
   Metric:         euclidean
   Scaler:         StandardScaler
-  Train shape:    (9000, 576)
-  Test shape:     (6000, 576)
-  Num features:   576
+  Train shape:    (9000, 2048)
+  Test shape:     (6000, 2048)
+  Num features:   2048
   Train samples:  9000
   Test samples:   6000
 ==================================================

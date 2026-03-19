@@ -3,7 +3,7 @@
 import torch
 import torch.nn as nn
 from torchvision import datasets, transforms
-from torchvision.models import mobilenet_v3_small, MobileNet_V3_Small_Weights
+from torchvision.models import resnet50, ResNet50_Weights
 from torch.utils.data import DataLoader, random_split
 import numpy as np
 import random
@@ -70,13 +70,13 @@ train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
 # --------------------------------------------------
-# MobileNetV3 Small feature extractor (576-D)
+# ResNet50 feature extractor (2048-D)
 # --------------------------------------------------
-weights = MobileNet_V3_Small_Weights.IMAGENET1K_V1
-model = mobilenet_v3_small(weights=weights)
+weights = ResNet50_Weights.IMAGENET1K_V1
+model = resnet50(weights=weights)
 
-# Remove classifier → output is 576-D
-model.classifier = nn.Identity()
+# Remove classifier → output is 2048-D
+model.fc = nn.Identity()
 
 model = model.to(DEVICE)
 model.eval()
@@ -93,7 +93,7 @@ def extract_features(loader):
     with torch.no_grad():
         for images, lbls in tqdm(loader, desc="Extracting features", unit="batch"):
             images = images.to(DEVICE)
-            feats = model(images)           # [B, 576]
+            feats = model(images)           # [B, 2048]
             features.append(feats.cpu().numpy())
             labels.append(lbls.numpy())
 
@@ -138,7 +138,7 @@ save_csv(
 print("\n" + "="*50)
 print("Feature Extraction Configuration")
 print("="*50)
-print(f"  Model:          MobileNetV3 Small (576-D)")
+print(f"  Model:          ResNet50 (2048-D)")
 print(f"  Weights:        IMAGENET1K_V1")
 print(f"  Data dir:       {DATA_DIR}")
 print(f"  Output dir:     {OUTPUT_DIR}")
