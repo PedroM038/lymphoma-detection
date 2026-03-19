@@ -11,7 +11,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 # --------------------------------------------------
 TRAIN_CSV = "features_csv/train_features.csv"
 TEST_CSV = "features_csv/test_features.csv"
-N_NEIGHBORS = 7
+N_NEIGHBORS = 21
 METRIC = "manhattan"
 WEIGHTS = "distance"
 
