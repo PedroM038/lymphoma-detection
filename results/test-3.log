@@ -1,0 +1,61 @@
+=== Feature Extraction ===
+Time taken: 22:08
+Train features shape: (9000, 2048)
+Test features shape: (6000, 2048)
+
+==================================================
+Feature Extraction Configuration
+==================================================
+  Model:          ResNet50 (2048-D)
+  Weights:        IMAGENET1K_V1
+  Data dir:       lymphoma-database/
+  Output dir:     features_csv
+  Batch size:     32
+  Train split:    0.6 (60% / 40%)
+  Seed:           42
+  Device:         cpu
+  Total images:   15000
+  Classes:        ['lymph_cll', 'lymph_fl', 'lymph_mcl']
+  Image size:     224x224
+  Normalization:  mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+
+total_size = 575M
+CSV files saved in: features_csv
+==================================================
+
+
+=== KNN Classification ===
+Loading feature files...
+Training k-NN...
+
+Classification Report (k-NN):
+              precision    recall  f1-score   support
+
+           0       0.87      0.94      0.90      1984
+           1       0.91      0.93      0.92      1960
+           2       0.92      0.82      0.87      2056
+
+    accuracy                           0.90      6000
+   macro avg       0.90      0.90      0.90      6000
+weighted avg       0.90      0.90      0.90      6000
+
+Confusion Matrix:
+[[1869   38   77]
+ [  60 1826   74]
+ [ 230  132 1694]]
+
+==================================================
+k-NN Configuration
+==================================================
+  Train CSV:      features_csv/train_features.csv
+  Test CSV:       features_csv/test_features.csv
+  k (neighbors):  7
+  Metric:         manhattan
+  Scaler:         StandardScaler
+  Train shape:    (9000, 2048)
+  Test shape:     (6000, 2048)
+  Num features:   2048
+  Train samples:  9000
+  Test samples:   6000
+==================================================
+

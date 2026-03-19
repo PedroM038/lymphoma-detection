@@ -12,7 +12,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 TRAIN_CSV = "features_csv/train_features.csv"
 TEST_CSV = "features_csv/test_features.csv"
 N_NEIGHBORS = 7
-METRIC = "euclidean"     
+METRIC = "manhattan"
+WEIGHTS = "distance"
 
 # --------------------------------------------------
 # Load CSV files
@@ -43,7 +44,8 @@ X_test = scaler.transform(X_test)
 # --------------------------------------------------
 knn = KNeighborsClassifier(
     n_neighbors=N_NEIGHBORS,
-    metric=METRIC
+    metric=METRIC,
+    weights=WEIGHTS
 )
 
 print("Training k-NN...")
