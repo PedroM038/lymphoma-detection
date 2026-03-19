@@ -5,15 +5,17 @@ import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.decomposition import PCA
 
 # --------------------------------------------------
 # Configuration
 # --------------------------------------------------
 TRAIN_CSV = "features_csv/train_features.csv"
 TEST_CSV = "features_csv/test_features.csv"
-N_NEIGHBORS = 21
+N_NEIGHBORS = 5
 METRIC = "manhattan"
 WEIGHTS = "distance"
+N_COMPONENTS = 150  # Number of PCA components
 
 # --------------------------------------------------
 # Load CSV files
@@ -38,6 +40,13 @@ X_test = test_df.drop(columns=["label"]).values
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
+
+# --------------------------------------------------
+# PCA for dimensionality reduction
+# --------------------------------------------------
+pca = PCA(n_components=N_COMPONENTS)
+X_train = pca.fit_transform(X_train)
+X_test = pca.transform(X_test)
 
 # --------------------------------------------------
 # k-NN classifier
