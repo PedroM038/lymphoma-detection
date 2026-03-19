@@ -14,7 +14,7 @@ import os
 # --------------------------------------------------
 # Configuration
 # --------------------------------------------------
-DATA_DIR = "dataset"
+DATA_DIR = "lymphoma-database/"
 BATCH_SIZE = 32
 TRAIN_SPLIT = 0.6
 SEED = 42
@@ -52,7 +52,6 @@ transform = transforms.Compose([
 # --------------------------------------------------
 full_dataset = datasets.ImageFolder(DATA_DIR, transform=transform)
 class_names = full_dataset.classes
-print("Classes:", class_names)
 
 # --------------------------------------------------
 # Train / Test split (60 / 40)
@@ -136,5 +135,23 @@ save_csv(
     os.path.join(OUTPUT_DIR, "test_features.csv")
 )
 
+print("\n" + "="*50)
+print("Feature Extraction Configuration")
+print("="*50)
+print(f"  Model:          MobileNetV3 Small (576-D)")
+print(f"  Weights:        IMAGENET1K_V1")
+print(f"  Data dir:       {DATA_DIR}")
+print(f"  Output dir:     {OUTPUT_DIR}")
+print(f"  Batch size:     {BATCH_SIZE}")
+print(f"  Train split:    {TRAIN_SPLIT} ({int(TRAIN_SPLIT*100)}% / {int((1-TRAIN_SPLIT)*100)}%)")
+print(f"  Seed:           {SEED}")
+print(f"  Device:         {DEVICE}")
+print(f"  Total images:   {len(full_dataset)}")
+print(f"  Classes:        {class_names}")
+print(f"  Image size:     224x224")
+print(f"  Normalization:  mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]")
+
 print("\nCSV files saved in:", OUTPUT_DIR)
+print("="*50 + "\n")
+
 
