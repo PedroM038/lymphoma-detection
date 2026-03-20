@@ -1,0 +1,33 @@
+Loading feature files...
+Training k-NN...
+
+Classification Report (k-NN):
+              precision    recall  f1-score   support
+
+           0       0.88      0.94      0.91      1984
+           1       0.92      0.93      0.93      1960
+           2       0.92      0.84      0.88      2056
+
+    accuracy                           0.90      6000
+   macro avg       0.90      0.90      0.90      6000
+weighted avg       0.90      0.90      0.90      6000
+
+Confusion Matrix:
+[[1863   35   86]
+ [  59 1831   70]
+ [ 204  129 1723]]
+
+==================================================
+k-NN Configuration
+==================================================
+  Train CSV:      features_csv/train_features.csv
+  Test CSV:       features_csv/test_features.csv
+  k (neighbors):  5
+  Metric:         euclidean
+  Scaler:         StandardScaler
+  Train shape:    (9000, 150)
+  Test shape:     (6000, 150)
+  Num features:   150
+  Train samples:  9000
+  Test samples:   6000
+==================================================

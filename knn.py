@@ -12,8 +12,8 @@ from sklearn.decomposition import PCA
 # --------------------------------------------------
 TRAIN_CSV = "features_csv/train_features.csv"
 TEST_CSV = "features_csv/test_features.csv"
-N_NEIGHBORS = 7
-METRIC = "manhattan"
+N_NEIGHBORS = 5
+METRIC = "manhattan"  # L1 distance, often better for high-dimensional data
 WEIGHTS = "distance"
 N_COMPONENTS = 150  # Number of PCA components
 

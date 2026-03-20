@@ -1,0 +1,184 @@
+% CVPR 2022 Paper Template
+% based on the CVPR template provided by Ming-Ming Cheng (https://github.com/MCG-NKU/CVPR_Template)
+% modified and extended by Stefan Roth (stefan.roth@NOSPAMtu-darmstadt.de)
+
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+%%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
+%\usepackage[review]{cvpr}      % To produce the REVIEW version
+\usepackage{cvpr}              % To produce the CAMERA-READY version
+%\usepackage[pagenumbers]{cvpr} % To force page numbers, e.g. for an arXiv version
+
+% Include other packages here, before hyperref.
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+
+
+% It is strongly recommended to use hyperref, especially for the review version.
+% hyperref with option pagebackref eases the reviewers' job.
+% Please disable hyperref *only* if you encounter grave issues, e.g. with the
+% file validation for the camera-ready version.
+%
+% If you comment hyperref and then uncomment it, you should delete
+% ReviewTempalte.aux before re-running LaTeX.
+% (Or just hit 'q' on the first LaTeX run, let it finish, and you
+%  should be clear).
+\usepackage[pagebackref,breaklinks,colorlinks]{hyperref}
+
+
+% Support for easy cross-referencing
+\usepackage[capitalize]{cleveref}
+\crefname{section}{Sec.}{Secs.}
+\Crefname{section}{Section}{Sections}
+\Crefname{table}{Table}{Tables}
+\crefname{table}{Tab.}{Tabs.}
+
+
+%%%%%%%%% PAPER ID  - PLEASE UPDATE
+\def\cvprPaperID{*****} % *** Enter the CVPR Paper ID here
+\def\confName{CVPR}
+\def\confYear{2022}
+
+
+\begin{document}
+
+%%%%%%%%% TITLE
+\title{Classificação de Linfomas via Extração de Características com Redes Neurais Convolucionais e k-NN}
+
+\author{Pedro Henrique Marques de Lima\\
+Universidade Federal do Paraná\\
+Curitiba -- PR, Brasil\\
+{\tt\small pedro.marques@ufpr.br}
+}
+\maketitle
+
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+Este trabalho investiga a classificação de imagens histopatológicas de linfomas a partir de representações extraídas por redes neurais convolucionais pré-treinadas. Foram comparadas três representações distintas: MobileNetV3 Small (576 dimensões), ResNet50 (2048 dimensões) e ResNet50 com redução de dimensionalidade via PCA. A classificação foi realizada utilizando o algoritmo k-NN com diferentes configurações de hiperparâmetros. Os resultados mostram que a combinação de ResNet50 com PCA (150 componentes), distância Manhattan e $k=5$ alcançou a melhor acurácia de 93\%, demonstrando que representações mais profundas aliadas à redução de dimensionalidade são eficazes para a tarefa.
+\end{abstract}
+
+%%%%%%%%% BODY TEXT
+\section{Introdução}
+\label{sec:intro}
+
+O linfoma é um grupo de neoplasias que se origina no sistema linfático e apresenta subtipos com características histopatológicas distintas. A diferenciação entre subtipos como a leucemia linfocítica crônica (CLL), o linfoma folicular (FL) e o linfoma de células do manto (MCL) é fundamental para o diagnóstico adequado e a definição do tratamento~\cite{Orlov2010}.
+
+A análise automatizada de imagens histopatológicas utilizando técnicas de aprendizado de máquina tem se mostrado promissora para auxiliar patologistas nessa tarefa~\cite{Shamir2008}.
+
+Neste trabalho, são comparadas três representações extraídas de modelos pré-treinados --- MobileNetV3 Small, ResNet50 e ResNet50 com redução via PCA --- aplicadas à classificação dos três subtipos de linfoma utilizando o classificador k-NN.
+
+\section{Metodologia}
+\label{sec:metodologia}
+
+\subsection{Base de Dados}
+
+A base de dados utilizada é um subconjunto do \textit{Multi-Cancer Dataset}, disponível no Kaggle, composta por 15.000 imagens histopatológicas divididas igualmente em três classes: CLL (5.000), FL (5.000) e MCL (5.000). A divisão entre conjuntos de treinamento e teste seguiu a proporção 60\%/40\%, resultando em 9.000 amostras para treinamento e 6.000 para teste. A semente aleatória foi fixada em 42 para garantir a reprodutibilidade.
+
+\subsection{Extração de Características}
+
+As imagens foram redimensionadas para $224 \times 224$ pixels e normalizadas com média $[0.485, 0.456, 0.406]$ e desvio padrão $[0.229, 0.224, 0.225]$. Foram avaliadas três representações:
+
+\begin{itemize}
+  \item \textbf{MobileNetV3 Small}: modelo leve projetado para dispositivos móveis, gerando vetores de 576 dimensões.
+  \item \textbf{ResNet50}: modelo profundo com arquitetura residual, gerando vetores de 2048 dimensões.
+  \item \textbf{ResNet50 + PCA}: os vetores de 2048 dimensões do ResNet50 foram reduzidos via Análise de Componentes Principais (PCA) para 150 ou 200 componentes.
+\end{itemize}
+
+Em todos os casos, a camada classificadora do modelo foi substituída por uma camada identidade, e os pesos pré-treinados (IMAGENET1K\_V1) foram utilizados sem ajuste fino.
+
+\subsection{Classificador k-NN}
+
+O classificador k-NN foi aplicado sobre as representações extraídas, com normalização prévia via \texttt{StandardScaler}. Foram variados os seguintes hiperparâmetros:
+\begin{itemize}
+  \item Número de vizinhos ($k$): 5, 7, 15, 21.
+  \item Métrica de distância: Euclidiana e Manhattan.
+  \item Ponderação por distância (\texttt{weights=distance}).
+\end{itemize}
+
+\section{Experimentos e Resultados}
+\label{sec:resultados}
+
+Foram conduzidos nove experimentos variando o modelo de extração, os hiperparâmetros do k-NN e o uso de PCA. A \cref{tab:resultados} resume todas as configurações e respectivas acurácias.
+
+\begin{table}[t]
+\centering
+\caption{Resumo dos experimentos realizados. A coluna \textit{Dim.} indica a dimensionalidade final das características utilizadas pelo k-NN.}
+\label{tab:resultados}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}clcccc@{}}
+\toprule
+\textbf{\#} & \textbf{Modelo} & \textbf{Dim.} & $\boldsymbol{k}$ & \textbf{Métrica} & \textbf{Acurácia} \\
+\midrule
+1 & MobileNetV3 Small & 576 & 7 & Euclidiana & 0,82 \\
+2 & ResNet50 & 2048 & 7 & Euclidiana & 0,90 \\
+3 & ResNet50 & 2048 & 7 & Manhattan & 0,90 \\
+4 & ResNet50 & 2048 & 15 & Manhattan & 0,88 \\
+5 & ResNet50 & 2048 & 21 & Manhattan & 0,87 \\
+6 & ResNet50 + PCA & 150 & 5 & Manhattan & \textbf{0,93} \\
+7 & ResNet50 + PCA & 200 & 5 & Manhattan & 0,93 \\
+8 & ResNet50 + PCA & 150 & 7 & Manhattan & 0,92 \\
+9 & ResNet50 + PCA & 150 & 5 & Euclidiana & 0,90 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Impacto do Modelo de Extração}
+
+A troca do MobileNetV3 Small (teste 1) pelo ResNet50 (teste 2) proporcionou um aumento de 8 pontos percentuais na acurácia (82\% para 90\%), mantendo os mesmos hiperparâmetros do k-NN ($k=7$, distância Euclidiana). Esse ganho reflete a maior capacidade de representação do ResNet50 (2048-D \textit{vs.} 576-D), cuja arquitetura residual mais profunda captura padrões mais discriminativos nas imagens histopatológicas.
+
+\subsection{Impacto da Métrica de Distância}
+
+Comparando os testes 2 e 3, a mudança da métrica Euclidiana para Manhattan com as mesmas 2048 características e $k=7$ manteve a acurácia em 90\%. No entanto, quando aplicada ao espaço reduzido por PCA, a diferença entre métricas torna-se significativa: o teste 6 (Manhattan, PCA 150, $k=5$) alcançou 93\%, enquanto o teste 9, com configuração idêntica exceto pela métrica Euclidiana, obteve apenas 90\% --- uma queda de 3 pontos percentuais. Isso indica que, no espaço de menor dimensionalidade após PCA, a distância Manhattan é mais robusta para discriminar os subtipos de linfoma.
+
+\subsection{Impacto do Valor de $k$}
+
+Com o ResNet50 sem PCA e métrica Manhattan, foram testados $k=7$ (teste 3), $k=15$ (teste 4) e $k=21$ (teste 5), obtendo acurácias de 90\%, 88\% e 87\%, respectivamente. Valores maiores de $k$ suavizam excessivamente as fronteiras decisórias, degradando o desempenho. 
+
+Já com PCA (150 componentes), $k=5$ (teste 6) superou $k=7$ (teste 8) em 1 ponto percentual (93\% \textit{vs.} 92\%), confirmando que vizinhanças menores são mais adequadas para esta tarefa.
+
+\subsection{Impacto da Redução de Dimensionalidade}
+
+A aplicação de PCA foi um fator de grande impacto nos resultados. A redução de 2048 para 150 componentes (teste 6) elevou a acurácia de 90\% (teste 3, sem PCA) para 93\%, um ganho de 3 pontos percentuais. Tal ganho evidencia que o espaço original de 2048 dimensões contém redundância e ruído que prejudicam a distância entre vizinhos no k-NN. O PCA concentra a variância nas dimensões mais informativas, melhorando a separabilidade entre as classes.
+
+A comparação entre 150 (teste 6) e 200 componentes (teste 7) mostra acurácias idênticas (93\%), sugerindo que 150 componentes já capturam a variância relevante para a discriminação das classes.
+
+\subsection{Melhor Configuração}
+
+A \cref{tab:melhor} apresenta o relatório de classificação detalhado do melhor resultado obtido (teste 6). A classe FL obteve o melhor desempenho ($F_1 = 0{,}95$), enquanto a classe MCL apresentou o menor \textit{recall} (0,87), indicando maior dificuldade do modelo em identificar corretamente esse subtipo.
+
+\begin{table}[t]
+\centering
+\caption{Relatório de classificação do melhor experimento (teste 6): ResNet50 + PCA 150, $k=5$, Manhattan.}
+\label{tab:melhor}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Classe} & \textbf{Precisão} & \textbf{Recall} & $\boldsymbol{F_1}$ & \textbf{Suporte} \\
+\midrule
+CLL  & 0,89 & 0,96 & 0,93 & 1984 \\
+FL   & 0,95 & 0,95 & 0,95 & 1960 \\
+MCL  & 0,95 & 0,87 & 0,91 & 2056 \\
+\midrule
+\textbf{Acurácia} & \multicolumn{3}{c}{\textbf{0,93}} & 6000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A matriz de confusão do teste 6 revela que os erros mais frequentes ocorrem entre CLL e MCL: 181 amostras de MCL foram classificadas como CLL e 50 amostras de CLL como MCL, refletindo a similaridade morfológica entre esses subtipos.
+
+\section{Conclusão}
+\label{sec:conclusao}
+
+Este trabalho investigou a classificação de três subtipos de linfoma utilizando representações extraídas por CNNs pré-treinadas e o classificador k-NN. Os experimentos demonstraram que: (1) o ResNet50 é significativamente superior ao MobileNetV3 Small para esta tarefa; (2) a redução de dimensionalidade via PCA é o fator mais impactante, elevando a acurácia de 90\% para 93\%; (3) valores menores de $k$ (5) são preferíveis; e (4) a métrica Manhattan apresenta resultados competitivos com a Euclidiana.
+
+O melhor resultado (93\% de acurácia) foi obtido com ResNet50 + PCA (150 componentes), $k=5$ e distância Manhattan, configuração que alia representações ricas com redução de ruído dimensional. Trabalhos futuros podem explorar outros modelos pré-treinados (\textit{e.g.}, EfficientNet, ViT) e técnicas de seleção de características como alternativa ao PCA.
+
+%%%%%%%%% REFERENCES
+{\small
+\bibliographystyle{ieee_fullname}
+\bibliography{egbib}
+}
+
+\end{document}

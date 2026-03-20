@@ -210,7 +210,6 @@ Lab-Representacao-Leucemia.pdf
 *.sty
 *.bib
 *.bst
-*.tex
 *venv
 *database/
 *.csv
